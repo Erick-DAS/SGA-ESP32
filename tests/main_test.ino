@@ -30,7 +30,9 @@ const int PINO_STATE1 = 27;
 const int PINO_STATE2 = 13;
 const int PINO_STATE3 = 17;
 const int PINO_STATE4 = 4;
-const int PINO_STATE5 = 15; 
+//const int PINO_STATE5 = 15;
+
+const int PINO_3V3 = 15; 
 
 // COMEU MACA
 
@@ -92,7 +94,8 @@ void setup() {
   pinMode(PINO_STATE2, INPUT);
   pinMode(PINO_STATE3, INPUT);
   pinMode(PINO_STATE4, INPUT);
-  pinMode(PINO_STATE5, INPUT);
+
+  pinMode(PINO_3V3, OUTPUT);
 
   pinMode(PINO_LED, OUTPUT); 
   pinMode(PINO_COMEU_MACA, INPUT);   
@@ -170,6 +173,8 @@ char *stringify(int* int_array, int length) {
 
 void loop() {
 
+    digitalWrite(PINO_3V3, HIGH);
+
     int snake_pos[6] = {digitalRead(PINO_SNAKE1),
                         digitalRead(PINO_SNAKE2),
                         digitalRead(PINO_SNAKE3),
@@ -184,15 +189,14 @@ void loop() {
                         digitalRead(PINO_APPLE5),
                         digitalRead(PINO_APPLE6)};
 
-    int state[5]     = {digitalRead(PINO_STATE1),
+    int state[4]     = {digitalRead(PINO_STATE1),
                         digitalRead(PINO_STATE2),
                         digitalRead(PINO_STATE3),
-                        digitalRead(PINO_STATE4),
-                        digitalRead(PINO_STATE5)};
+                        digitalRead(PINO_STATE4)};
 
     char *new_snake_pos_string = stringify(snake_pos, 6);
     char *new_apple_pos_string = stringify(apple_pos, 6);
-    char *new_state_string = stringify(state, 5);
+    char *new_state_string = stringify(state, 4);
 
     int new_comeu_maca = digitalRead(PINO_COMEU_MACA);
 
