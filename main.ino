@@ -1,5 +1,7 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 // PIN setup variables
 
@@ -132,6 +134,32 @@ void reconnect() {
   }
 }
 
+char *stringify(int* int_array, int length) {
+
+    // Calculate the total length needed for the string
+    int total_length = length * 2 + 1; // Twice the length of the integer array plus one for the null terminator
+    
+    // Allocate memory for the string
+    char* char_array = (char*)malloc(total_length * sizeof(char));
+    
+    if (char_array == NULL) {
+        printf("Memory allocation failed\n");
+        return NULL;
+    }
+    
+    // Convert integers to characters
+    int i;
+    char* ptr = char_array;
+    for (i = 0; i < length; i++) {
+        ptr += sprintf(ptr, "%d", int_array[i]);
+    }
+    
+    // Add null terminator
+    *ptr = '\0';
+    
+    return char_array;
+}
+
 void loop() {
     int snake_pos[6] = {digitalRead(PINO_SNAKE1),
                         digitalRead(PINO_SNAKE2),
@@ -152,6 +180,10 @@ void loop() {
                         digitalRead(PINO_STATE3),
                         digitalRead(PINO_STATE4),
                         digitalRead(PINO_STATE5)};
+
+    char *snake_pos_string = stringify(snake_pos, 6);
+    char *apple_pos_string = stringify(apple_pos, 6);
+    char *state_string = stringify(state, 6);
 
     int comeu_maca = digitalRead(PINO_COMEU_MACA);
 
@@ -174,9 +206,11 @@ void loop() {
     client.loop();
     long now = millis();
 
-  // client.publish("snake_game/snake_pos", snake_pos);
-  // client.publish("snake_game/apple_pos", apple_pos);
-  // client.publish("snake_game/state", state);
+    
+
+  client.publish("snake_game/snake_pos", snake_pos_string);
+  client.publish("snake_game/apple_pos", apple_pos_string);
+  client.publish("snake_game/state", state_string);
 
   if (comeu_maca == 1) {
     digitalWrite(PINO_LED, HIGH);
