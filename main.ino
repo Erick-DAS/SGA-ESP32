@@ -2,10 +2,45 @@
 #include <PubSubClient.h>
 
 // PIN setup variables
-const int PINO_COMEU_MACA = 39; // FPGA signal 
-const int PINO_BUZZER = 33; // Buzzer pin 
-const int PINO_3V3 = 32; // 3V3 pin
+
+// SNAKE_POS
+
+const int PINO_SNAKE1 = 36;
+const int PINO_SNAKE2 = 39;
+const int PINO_SNAKE3 = 34;
+const int PINO_SNAKE4 = 35;
+const int PINO_SNAKE5 = 32;
+const int PINO_SNAKE6 = 33;
+
+
+// APPLE_POS
+
+const int PINO_APPLE1 = 23;
+const int PINO_APPLE2 = 22;
+const int PINO_APPLE3 = 3;
+const int PINO_APPLE4 = 21;
+const int PINO_APPLE5 = 19;
+const int PINO_APPLE6 = 18;
+
+// STATE
+
+const int PINO_STATE1 = 27;
+const int PINO_STATE2 = 13;
+const int PINO_STATE3 = 17;
+const int PINO_STATE4 = 4;
+const int PINO_STATE5 = 15;
+
+// COMEU MACA
+
+const int PINO_COMEU_MACA = 25; // FPGA signal 
+
+// BUZZER
+
+const int PINO_BUZZER = 26; // Buzzer pin
+
+// LED
 const int PINO_LED = 2; // Internal LED for debugging
+
 const int PWM_CHANNEL = 0; // PWM Channel for buzzer
 
 // Network setup variables
@@ -18,8 +53,6 @@ const int connection_port = 1883;
 WiFiClient espClient;
 //create PubSubClient
 PubSubClient client(espClient);
-//variable for time ellapsed
-long lastMsg = 0;
 
 #define PWM_FREQ 1000
 #define PWM_RES 8
@@ -29,10 +62,30 @@ void setup() {
   // PIN/PWM setup
   Serial.begin(115200); // Baud Rate
   ledcSetup(PWM_CHANNEL, PWM_FREQ, PWM_RES); // Setups PWM channel
-  ledcAttachPin(PINO_BUZZER, PWM_CHANNEL); 
+  ledcAttachPin(PINO_BUZZER, PWM_CHANNEL);
+
+  pinMode(PINO_SNAKE1, INPUT);
+  pinMode(PINO_SNAKE2, INPUT);
+  pinMode(PINO_SNAKE3, INPUT);
+  pinMode(PINO_SNAKE4, INPUT);
+  pinMode(PINO_SNAKE5, INPUT);
+  pinMode(PINO_SNAKE6, INPUT); 
+  
+  pinMode(PINO_APPLE1, INPUT);
+  pinMode(PINO_APPLE2, INPUT);
+  pinMode(PINO_APPLE3, INPUT);
+  pinMode(PINO_APPLE4, INPUT);
+  pinMode(PINO_APPLE5, INPUT);
+  pinMode(PINO_APPLE6, INPUT);
+
+  pinMode(PINO_STATE1, INPUT);
+  pinMode(PINO_STATE2, INPUT);
+  pinMode(PINO_STATE3, INPUT);
+  pinMode(PINO_STATE4, INPUT);
+  pinMode(PINO_STATE5, INPUT);
+
   pinMode(PINO_LED, OUTPUT); 
-  pinMode(PINO_COMEU_MACA, INPUT); 
-  pinMode(PINO_3V3, OUTPUT);   
+  pinMode(PINO_COMEU_MACA, INPUT);   
 
 
   // Network setup
@@ -52,8 +105,9 @@ void setup_wifi() {
   //test to see, if connected
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
+    Serial.println("Trying to connect to wifi \n");
   }
+
   Serial.println("");
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
@@ -79,9 +133,28 @@ void reconnect() {
 }
 
 void loop() {
-    digitalWrite(PINO_3V3, HIGH);
+    int snake_pos[6] = {digitalRead(PINO_SNAKE1),
+                        digitalRead(PINO_SNAKE2),
+                        digitalRead(PINO_SNAKE3),
+                        digitalRead(PINO_SNAKE4),
+                        digitalRead(PINO_SNAKE5),
+                        digitalRead(PINO_SNAKE6)};
+
+    int apple_pos[6] = {digitalRead(PINO_APPLE1),
+                        digitalRead(PINO_APPLE2),
+                        digitalRead(PINO_APPLE3),
+                        digitalRead(PINO_APPLE4),
+                        digitalRead(PINO_APPLE5),
+                        digitalRead(PINO_APPLE6)};
+
+    int state[5]     = {digitalRead(PINO_STATE1),
+                        digitalRead(PINO_STATE2),
+                        digitalRead(PINO_STATE3),
+                        digitalRead(PINO_STATE4),
+                        digitalRead(PINO_STATE5)};
 
     int comeu_maca = digitalRead(PINO_COMEU_MACA);
+
     Serial.println("comeu_maca: ");
     Serial.println(comeu_maca);
 
@@ -100,25 +173,15 @@ void loop() {
     
     client.loop();
     long now = millis();
-  
-    //send message after 5s
-  
-//    if (now - lastMsg > 5000) {
-//        lastMsg = now;
-//        //generate random temperature value
-//        temperature = random(0, 300);   
-//        char tempString[8];
-//        //convert temperature to string with 2 decimal places
-//        dtostrf(temperature, 1, 2, tempString);
-//        Serial.print("Temperature: ");
-//        Serial.println(tempString);
-//        // Publish temperature value to MQTT topic named esp32/temperature
-//        client.publish("esp32/teste", tempString);
-//    }
+
+  // client.publish("snake_game/snake_pos", snake_pos);
+  // client.publish("snake_game/apple_pos", apple_pos);
+  // client.publish("snake_game/state", state);
 
   if (comeu_maca == 1) {
     digitalWrite(PINO_LED, HIGH);
     client.publish("esp32/teste", "Estou apitando");
+    client.publish("snake_game/comeu_maca", "1");
     for (int i = 0; i < sizeof(melody) / sizeof(melody[0]); i++)  {
       ledcWrite(PWM_CHANNEL, melody[i]);
       delay(tempo[i] * 1.30);             // Pequeno delay para espaçar as notas
@@ -129,6 +192,7 @@ void loop() {
   else {
     digitalWrite(PINO_LED, LOW);
     client.publish("esp32/teste", "Nao estou apitando");
+    client.publish("snake_game/comeu_maca", "0");
   }
   
   delay(50); // Pausa na musica por 50 ms
