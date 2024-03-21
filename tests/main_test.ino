@@ -48,9 +48,9 @@ const int PINO_LED = 2; // Internal LED for debugging
 const int PWM_CHANNEL = 0; // PWM Channel for buzzer
 
 // Network setup variables
-const char* ssid = "NOME";
-const char* password = "SENHA";
-const char* mqtt_server = "IP";
+const char* ssid = "NOME_WIFI";
+const char* password = "SENHA_WIFI";
+const char* mqtt_server = "IP_DO_BROKER";
 const int connection_port = 1883;
 
 //create wifi client 
@@ -63,11 +63,17 @@ PubSubClient client(espClient);
 
 int comeu_maca = 0;
 
-char *snake_pos_string;
-char *apple_pos_string;
-char *state_string;
+String snake_pos_string = "";
+String apple_pos_string = "";
+String state_string = "";
+
+String new_snake_pos_string = "";
+String new_apple_pos_string = "";
+String new_state_string = "";
 
 bool updated = false;
+
+
 
 //setup()
 void setup() {
@@ -145,32 +151,6 @@ void reconnect() {
   }
 }
 
-char *stringify(int* int_array, int length) {
-
-    // Calculate the total length needed for the string
-    int total_length = length * 2 + 1; // Twice the length of the integer array plus one for the null terminator
-    
-    // Allocate memory for the string
-    char* char_array = (char*)malloc(total_length * sizeof(char));
-    
-    if (char_array == NULL) {
-        printf("Memory allocation failed\n");
-        return NULL;
-    }
-    
-    // Convert integers to characters
-    int i;
-    char* ptr = char_array;
-    for (i = 0; i < length; i++) {
-        ptr += sprintf(ptr, "%d", int_array[i]);
-    }
-    
-    // Add null terminator
-    *ptr = '\0';
-    
-    return char_array;
-}
-
 void loop() {
 
     digitalWrite(PINO_3V3, HIGH);
@@ -194,16 +174,24 @@ void loop() {
                         digitalRead(PINO_STATE3),
                         digitalRead(PINO_STATE4)};
 
-    char *new_snake_pos_string = stringify(snake_pos, 6);
-    char *new_apple_pos_string = stringify(apple_pos, 6);
-    char *new_state_string = stringify(state, 4);
+    new_snake_pos_string = "";
+    new_apple_pos_string = "";
+    new_state_string = "";
+
+    for (int i = 0; i < 6; i++) {
+      new_snake_pos_string += String(snake_pos[i]);
+      new_apple_pos_string += String(apple_pos[i]);
+      if (i < 4) {
+        new_state_string += String(state[i]);
+      }
+    }
 
     int new_comeu_maca = digitalRead(PINO_COMEU_MACA);
 
     if (new_comeu_maca != comeu_maca || 
-        strcmp(new_snake_pos_string, snake_pos_string) == 1 ||
-        strcmp(new_apple_pos_string, apple_pos_string) == 1 ||
-        strcmp(new_state_string, state_string) == 1) {
+        strcmp(new_snake_pos_string.c_str(), snake_pos_string.c_str()) != 0 ||
+        strcmp(new_apple_pos_string.c_str(), apple_pos_string.c_str()) != 0 ||
+        strcmp(new_state_string.c_str(), state_string.c_str()) != 0) {
       updated = true;
     }
     else {
@@ -233,9 +221,9 @@ void loop() {
     apple_pos_string = new_apple_pos_string;
     state_string = new_state_string;
 
-    client.publish("snake_game/snake_pos", snake_pos_string);
-    client.publish("snake_game/apple_pos", apple_pos_string);
-    client.publish("snake_game/state", state_string);
+    client.publish("snake_game/snake_pos", snake_pos_string.c_str());
+    client.publish("snake_game/apple_pos", apple_pos_string.c_str());
+    client.publish("snake_game/state", state_string.c_str());
 
     if (new_comeu_maca == 1) {
       comeu_maca = 1;
