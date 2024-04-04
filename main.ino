@@ -7,12 +7,12 @@
 
 // SNAKE_POS
 
-const int PINO_SNAKE1 = 36;
-const int PINO_SNAKE2 = 39;
-const int PINO_SNAKE3 = 34;
-const int PINO_SNAKE4 = 35;
-const int PINO_SNAKE5 = 32;
-const int PINO_SNAKE6 = 33;
+const int PINO_SNAKE6 = 36;
+const int PINO_SNAKE5 = 39;
+const int PINO_SNAKE4 = 34;
+const int PINO_SNAKE3 = 35;
+const int PINO_SNAKE2 = 32;
+const int PINO_SNAKE1 = 33;
 
  
 // APPLE_POS
@@ -94,12 +94,12 @@ void setup() {
   ledcSetup(PWM_CHANNEL, PWM_FREQ, PWM_RES); // Setups PWM channel
   ledcAttachPin(PINO_BUZZER, PWM_CHANNEL);
 
-  pinMode(PINO_SNAKE1, INPUT);
-  pinMode(PINO_SNAKE2, INPUT);
-  pinMode(PINO_SNAKE3, INPUT);
-  pinMode(PINO_SNAKE4, INPUT);
+  pinMode(PINO_SNAKE6, INPUT);
   pinMode(PINO_SNAKE5, INPUT);
-  pinMode(PINO_SNAKE6, INPUT); 
+  pinMode(PINO_SNAKE4, INPUT);
+  pinMode(PINO_SNAKE3, INPUT);
+  pinMode(PINO_SNAKE2, INPUT);
+  pinMode(PINO_SNAKE1, INPUT); 
   
   pinMode(PINO_APPLE1, INPUT);
   pinMode(PINO_APPLE2, INPUT);
@@ -172,12 +172,12 @@ void reconnect() {
 
 void loop() {
 
-    int snake_pos[6] = {digitalRead(PINO_SNAKE1),
-                        digitalRead(PINO_SNAKE2),
-                        digitalRead(PINO_SNAKE3),
-                        digitalRead(PINO_SNAKE4),
+    int snake_pos[6] = {digitalRead(PINO_SNAKE6),
                         digitalRead(PINO_SNAKE5),
-                        digitalRead(PINO_SNAKE6)};
+                        digitalRead(PINO_SNAKE4),
+                        digitalRead(PINO_SNAKE3),
+                        digitalRead(PINO_SNAKE2),
+                        digitalRead(PINO_SNAKE1)};
 
     int apple_pos[6] = {digitalRead(PINO_APPLE1),
                         digitalRead(PINO_APPLE2),
