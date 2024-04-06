@@ -4,13 +4,10 @@
 #include <PubSubClient.h>
 
 //**** WiFi credentials *****
-//ssid
-const char* ssid = "NomeDoWifi";
-//password
-const char* password = "SenhaDoWifi";
-
-// MQTT server information. Insert the ip address of your server
-const char* mqtt_server = "IpDoBroker";
+const char* ssid = "WIFI-NAME";
+const char* password = "WIFI-PASSWORD";
+const char* mqtt_server = "BROKER-IP";
+const int connection_port = 0; // Insert the desired port here (usually 1883 works on a local broker)
 
 //create wifi client 
 WiFiClient espClient;

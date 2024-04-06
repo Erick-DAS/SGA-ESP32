@@ -44,8 +44,6 @@ const int PINO_MODE = 12;
 
 const int PINO_DIFF = 2;
 
-// const int PINO_3V3 = 15; 
-
 // COMEU MACA
 
 const int PINO_COMEU_MACA = 25; // FPGA signal 
@@ -54,16 +52,13 @@ const int PINO_COMEU_MACA = 25; // FPGA signal
 
 const int PINO_BUZZER = 26; // Buzzer pin
 
-// LED
-// const int PINO_LED = 2; // Internal LED for debugging
-
 const int PWM_CHANNEL = 0; // PWM Channel for buzzer
 
 // Network setup variables
-const char* ssid = "Das";
-const char* password = "12345678";
-const char* mqtt_server = "192.168.135.253";
-const int connection_port = 1883;
+const char* ssid = "WIFI-NAME";
+const char* password = "WIFI-PASSWORD";
+const char* mqtt_server = "BROKER-IP";
+const int connection_port = 0; // Insert the desired port here (usually 1883 works on a local broker)
 
 //create wifi client 
 WiFiClient espClient;
@@ -85,10 +80,8 @@ String new_state_string = "";
 
 bool updated = false;
 
-
-
-//setup()
 void setup() {
+
   // PIN/PWM setup
   Serial.begin(115200); // Baud Rate
   ledcSetup(PWM_CHANNEL, PWM_FREQ, PWM_RES); // Setups PWM channel
@@ -114,15 +107,10 @@ void setup() {
   pinMode(PINO_STATE4, INPUT);
   pinMode(PINO_STATE5, INPUT);
 
-  //pinMode(PINO_3V3, OUTPUT);
-
-  //pinMode(PINO_LED, OUTPUT);
-
   pinMode(PINO_VEL, INPUT); 
   pinMode(PINO_MODE, INPUT); 
   pinMode(PINO_DIFF, INPUT); 
   pinMode(PINO_COMEU_MACA, INPUT);   
-
 
   // Network setup
   setup_wifi();
@@ -210,11 +198,10 @@ void loop() {
     int mode_select = digitalRead(PINO_MODE);
     int diff_select = digitalRead(PINO_DIFF);
 
-    if (new_comeu_maca != comeu_maca 
-    // || strcmp(new_snake_pos_string.c_str(), snake_pos_string.c_str()) != 0 || strcmp(new_apple_pos_string.c_str(), apple_pos_string.c_str()) != 0 || strcmp(new_state_string.c_str(), state_string.c_str()) != 0
-    ) {
+    if (new_comeu_maca != comeu_maca) {
       updated = true;
     }
+
     else {
       updated = false;
     }
@@ -234,7 +221,6 @@ void loop() {
     
     client.loop();
 
-  //if (updated) {
     Serial.println("comeu_maca: ");
     Serial.println(new_comeu_maca);
 
@@ -252,7 +238,6 @@ void loop() {
 
     if (new_comeu_maca == 1) {
       comeu_maca = 1;
-      // digitalWrite(PINO_LED, HIGH);
       client.publish("snake_game/comeu_maca", "1");
 
       for (int i = 0; i < sizeof(melody) / sizeof(melody[0]); i++)  {
@@ -266,8 +251,7 @@ void loop() {
     }
     else {
       comeu_maca = 0;
-      // digitalWrite(PINO_LED, LOW);
       client.publish("snake_game/comeu_maca", "0");
     }
-  //}
+
 }

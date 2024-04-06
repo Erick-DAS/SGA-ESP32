@@ -10,10 +10,10 @@ const int PINO_LED = 2; // Internal LED for debugging
 const int PWM_CHANNEL = 0; // PWM Channel for buzzer
 
 // Network setup variables
-const char* ssid = "NOME";
-const char* password = "SENHA";
-const char* mqtt_server = "IP DO PC";
-const int connection_port = 1883;
+const char* ssid = "WIFI-NAME";
+const char* password = "WIFI-PASSWORD";
+const char* mqtt_server = "BROKER-IP";
+const int connection_port = 0; // Insert the desired port here (usually 1883 works on a local broker)
 
 //create wifi client 
 WiFiClient espClient;

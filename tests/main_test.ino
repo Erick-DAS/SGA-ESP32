@@ -48,10 +48,10 @@ const int PINO_LED = 2; // Internal LED for debugging
 const int PWM_CHANNEL = 0; // PWM Channel for buzzer
 
 // Network setup variables
-const char* ssid = "NOME_WIFI";
-const char* password = "SENHA_WIFI";
-const char* mqtt_server = "IP_DO_BROKER";
-const int connection_port = 1883;
+const char* ssid = "WIFI-NAME";
+const char* password = "WIFI-PASSWORD";
+const char* mqtt_server = "BROKER-IP";
+const int connection_port = 0; // Insert the desired port here (usually 1883 works on a local broker)
 
 //create wifi client 
 WiFiClient espClient;
