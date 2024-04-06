@@ -13,6 +13,6 @@ Members of the group:
 - João Pedro Bassetti Freitas
 
 Teacher
-- Edson Midorikawa
+- Edson Toshimi Midorikawa
 
 
