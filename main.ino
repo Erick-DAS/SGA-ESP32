@@ -78,8 +78,6 @@ String new_snake_pos_string = "";
 String new_apple_pos_string = "";
 String new_state_string = "";
 
-bool updated = false;
-
 void setup() {
 
   // PIN/PWM setup
@@ -198,14 +196,6 @@ void loop() {
     int mode_select = digitalRead(PINO_MODE);
     int diff_select = digitalRead(PINO_DIFF);
 
-    if (new_comeu_maca != comeu_maca) {
-      updated = true;
-    }
-
-    else {
-      updated = false;
-    }
-
     int melody[] = {
         440, 100, 850
     };
@@ -238,7 +228,6 @@ void loop() {
 
     if (new_comeu_maca == 1) {
       comeu_maca = 1;
-      client.publish("snake_game/comeu_maca", "1");
 
       for (int i = 0; i < sizeof(melody) / sizeof(melody[0]); i++)  {
         ledcWrite(PWM_CHANNEL, melody[i]);
@@ -251,7 +240,6 @@ void loop() {
     }
     else {
       comeu_maca = 0;
-      client.publish("snake_game/comeu_maca", "0");
     }
 
 }

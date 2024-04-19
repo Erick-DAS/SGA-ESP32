@@ -19,12 +19,6 @@ void setup() {
 }
 
 void loop()  {
-  // digitalWrite(PINO_3V3, HIGH); // Uncomment for 3v3 feeding pin 
-
-  // int pino_3v3 = digitalRead(PINO_3V3); // Uncomment for 3v3 feeding pin
-  // Serial.println("3v3: ");
-  // Serial.println(pino_3v3);
-
   int comeu_maca = digitalRead(PINO_COMEU_MACA);
   Serial.println("comeu_maca: ");
   Serial.println(comeu_maca);
